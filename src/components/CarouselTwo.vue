@@ -13,7 +13,7 @@
 import { defineComponent, PropType, ref } from 'vue';
 
 export default defineComponent({
-  name: 'Carousel',
+  name: 'CarouselTwo',
   props: {
     images: {
       type: Array as PropType<string[]>,
@@ -28,7 +28,7 @@ export default defineComponent({
   },
   setup(props) {
     const selectedIndex = ref(0);
-    const timer = ref<number | undefined>(undefined);
+    let timer: number | undefined = undefined;
     const getSelectedItemIndex = (): number => {
       return selectedIndex.value;
     };
@@ -45,11 +45,11 @@ export default defineComponent({
       slideTo((selectedIndex.value + 1) % props.images.length);
     };
     const stop = (): void => {
-      clearInterval(timer.value);
+      clearInterval(timer);
     };
     const start = (): void => {
       stop();
-      timer.value = setInterval(() => slideNext(), props.cycle);
+      timer = setInterval(() => slideNext(), props.cycle);
     };
     start();
     return {
