@@ -1,9 +1,10 @@
 module.exports = {
     root: true,
+    parser: "@typescript-eslint/parser",
+    plugins: ["@typescript-eslint"],
     env: {
         node: true,
     },
-    extends: ['plugin:vue/vue3-essential', '@vue/standard', '@vue/typescript/recommended'],
     parserOptions: {
         ecmaVersion: 2020,
     },
@@ -12,5 +13,5 @@ module.exports = {
         'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'space-before-function-paren': ['error', 'never'],
         'comma-dangle': ['error', 'only-multiline'],
-    },
+    }
 }

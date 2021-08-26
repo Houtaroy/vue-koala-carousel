@@ -34,7 +34,9 @@ export default defineComponent({
     });
     return {
       currentIndex: cirularQueue.currentIndex,
-      slideTo: cirularQueue.to
+      slideTo: cirularQueue.to,
+      slideNext: cirularQueue.next,
+      slidePrevious: cirularQueue.previous
     };
   }
 });

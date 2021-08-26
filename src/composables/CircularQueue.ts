@@ -1,4 +1,18 @@
-import { ref } from 'vue';
+import { ref, Ref } from 'vue';
+
+interface ICircularQueue<T> {
+  queue: T[];
+  intervalTime: number;
+  currentIndex: Ref<number>;
+  getCurrentIndex: () => number;
+  getCurrentItem: () => T;
+  to: (index: number) => void;
+  previous: () => void;
+  next: () => void;
+  start: () => void;
+  stop: () => void;
+  setIntervalTime: (newVal: number) => void;
+}
 
 interface CircularQueueOptions {
   interval?: number;
@@ -6,10 +20,10 @@ interface CircularQueueOptions {
   immediate?: boolean;
 }
 
-function createCirularQueue<T>(items: T[], options?: CircularQueueOptions) {
+function createCirularQueue<T>(items: T[], options?: CircularQueueOptions): ICircularQueue<T> {
   let timer: number | undefined = undefined;
+  let intervalTime = options?.interval || 3000;
   const queue = items;
-  const intervalTime = ref(options?.interval || 3000);
   const currentIndex = ref(options?.startIndex || 0);
   const immediate = options?.immediate || true;
   const getCurrentIndex = (): number => {
@@ -32,10 +46,10 @@ function createCirularQueue<T>(items: T[], options?: CircularQueueOptions) {
   };
   const start = (): void => {
     stop();
-    timer = setInterval(() => next(), intervalTime.value);
+    timer = setInterval(() => next(), intervalTime);
   };
   const setIntervalTime = (newVal: number): void => {
-    intervalTime.value = newVal;
+    intervalTime = newVal;
     if (timer) {
       stop();
       start();
@@ -43,6 +57,8 @@ function createCirularQueue<T>(items: T[], options?: CircularQueueOptions) {
   };
   if (immediate) start();
   return {
+    queue,
+    intervalTime,
     currentIndex,
     getCurrentIndex,
     getCurrentItem,
@@ -52,7 +68,7 @@ function createCirularQueue<T>(items: T[], options?: CircularQueueOptions) {
     stop,
     start,
     setIntervalTime
-  };
+  } as ICircularQueue<T>;
 }
 
 export default createCirularQueue;

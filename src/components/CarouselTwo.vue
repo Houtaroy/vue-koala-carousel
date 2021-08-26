@@ -10,7 +10,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { defineComponent, PropType, ref, onMounted } from 'vue';
 
 export default defineComponent({
   name: 'CarouselTwo',
@@ -51,7 +51,9 @@ export default defineComponent({
       stop();
       timer = setInterval(() => slideNext(), props.cycle);
     };
-    start();
+    onMounted(() => {
+      start();
+    });
     return {
       selectedIndex,
       timer,
