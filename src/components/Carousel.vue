@@ -1,19 +1,22 @@
 <template>
-  <div>
-    <ul>
-      <template v-for="(image, index) in images" :key="index">
-        <li v-show="index === selectedIndex">
-          <img :src="image" />
-        </li>
-      </template>
-    </ul>
-  </div>
+  <ul>
+    <template v-for="(image, index) in images" :key="index">
+      <li v-show="index === selectedIndex">
+        <img :src="image" />
+      </li>
+    </template>
+  </ul>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { defineComponent, PropType } from 'vue';
+
+interface CarouselData {
+  selectedIndex: number;
+  timer: number | undefined;
+}
 
 export default defineComponent({
-  name: 'Carousel',
+  name: 'CarouselOne',
   props: {
     images: {
       type: Array as PropType<string[]>,
@@ -26,43 +29,40 @@ export default defineComponent({
       }
     }
   },
-  setup(props) {
-    const selectedIndex = ref(0);
-    const timer = ref<number | undefined>(undefined);
-    const getSelectedItemIndex = (): number => {
-      return selectedIndex.value;
-    };
-    const getSelectedItem = (): string => {
-      return props.images[selectedIndex.value];
-    };
-    const slideTo = (index: number): void => {
-      selectedIndex.value = index;
-    };
-    const slidePrevious = (): void => {
-      slideTo((props.images.length + selectedIndex.value - 1) % props.images.length);
-    };
-    const slideNext = (): void => {
-      slideTo((selectedIndex.value + 1) % props.images.length);
-    };
-    const stop = (): void => {
-      clearInterval(timer.value);
-    };
-    const start = (): void => {
-      stop();
-      timer.value = setInterval(() => slideNext(), props.cycle);
-    };
-    start();
+  data() {
     return {
-      selectedIndex,
-      timer,
-      getSelectedItem,
-      getSelectedItemIndex,
-      slideTo,
-      slidePrevious,
-      slideNext,
-      stop,
-      start
-    };
+      selectedIndex: 0,
+      timer: undefined
+    } as CarouselData;
+  },
+  methods: {
+    getSelectedItemIndex(): number {
+      return this.selectedIndex;
+    },
+    getSelectedItem(): string {
+      return this.$props.images[this.selectedIndex];
+    },
+    slideTo(index: number): void {
+      this.selectedIndex = index;
+    },
+    slidePrevious(): void {
+      this.slideTo(
+        (this.$props.images.length + this.selectedIndex - 1) % this.$props.images.length
+      );
+    },
+    slideNext(): void {
+      this.slideTo((this.selectedIndex + 1) % this.$props.images.length);
+    },
+    stop(): void {
+      clearInterval(this.timer);
+    },
+    start(): void {
+      this.stop();
+      this.timer = setInterval(() => this.slideNext(), this.$props.cycle);
+    }
+  },
+  mounted() {
+    this.start();
   }
 });
 </script>
