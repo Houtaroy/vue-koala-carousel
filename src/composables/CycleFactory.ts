@@ -1,45 +1,43 @@
 import { ref, Ref } from 'vue';
 
-interface ICircularQueue<T> {
-  queue: T[];
-  intervalTime: number;
+interface ICycle {
+  length: Ref<number>;
   currentIndex: Ref<number>;
+  intervalTime: number;
   getCurrentIndex: () => number;
-  getCurrentItem: () => T;
   to: (index: number) => void;
   previous: () => void;
   next: () => void;
   start: () => void;
   stop: () => void;
+  reset: () => void;
+  setLength: (newVal: number) => void;
   setIntervalTime: (newVal: number) => void;
 }
 
-interface CircularQueueOptions {
-  interval?: number;
+interface CycleOptions {
+  intervalTime?: number;
   startIndex?: number;
-  immediate?: boolean;
 }
 
-function createCirularQueue<T>(items: T[], options?: CircularQueueOptions): ICircularQueue<T> {
+function create(length: Ref<number>, options?: CycleOptions): ICycle {
+  if (length.value <= 0) {
+    throw Error('循环长度应大于0');
+  }
   let timer: number | undefined = undefined;
-  let intervalTime = options?.interval || 3000;
-  const queue = items;
   const currentIndex = ref(options?.startIndex || 0);
-  const immediate = options?.immediate || true;
+  let intervalTime = options?.intervalTime || 3000;
   const getCurrentIndex = (): number => {
     return currentIndex.value;
-  };
-  const getCurrentItem = (): T => {
-    return queue[currentIndex.value];
   };
   const to = (index: number): void => {
     currentIndex.value = index;
   };
   const previous = (): void => {
-    to((queue.length + currentIndex.value - 1) % queue.length);
+    to((length.value + currentIndex.value - 1) % length.value);
   };
   const next = (): void => {
-    to((currentIndex.value + 1) % queue.length);
+    to((currentIndex.value + 1) % length.value);
   };
   const stop = (): void => {
     clearInterval(timer);
@@ -48,27 +46,37 @@ function createCirularQueue<T>(items: T[], options?: CircularQueueOptions): ICir
     stop();
     timer = setInterval(() => next(), intervalTime);
   };
-  const setIntervalTime = (newVal: number): void => {
-    intervalTime = newVal;
+  const reset = (): void => {
     if (timer) {
       stop();
-      start();
     }
+    start();
+  }
+  const setLength = (newVal: number): void => {
+    length.value = newVal;
+    currentIndex.value = 0;
+    reset()
+  }
+  const setIntervalTime = (newVal: number): void => {
+    intervalTime = newVal;
+    reset()
   };
-  if (immediate) start();
   return {
-    queue,
-    intervalTime,
+    length,
     currentIndex,
+    intervalTime,
     getCurrentIndex,
-    getCurrentItem,
     to,
     previous,
     next,
     stop,
     start,
+    reset,
+    setLength,
     setIntervalTime
-  } as ICircularQueue<T>;
+  };
 }
 
-export default createCirularQueue;
+export default {
+  create
+};
