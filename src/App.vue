@@ -1,28 +1,15 @@
 <template>
-  <!-- <CarouselOne ref="one" :images="images"></CarouselOne> -->
-  <!-- <CarouselTwo ref="two" :images="images"></CarouselTwo> -->
-  <!-- <CarouselThree ref="three" :images="images" :cycle="cycle"></CarouselThree> -->
-  <CarouselFour ref="four" :intervalTime="cycle">
-    <li v-for="(image, index) in images" :key="index">
-      <img :src="image" />
-    </li>
-  </CarouselFour>
+  <Carousel ref="carousel" :images="images" :cycle="cycle"></Carousel>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
-import CarouselOne from './components/CarouselOne.vue';
-import CarouselTwo from './components/CarouselTwo.vue';
-import CarouselThree from './components/CarouselThree.vue';
-import CarouselFour from './components/CarouselFour';
+import { defineComponent } from 'vue';
+import Carousel from './components/Carousel.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    CarouselOne,
-    CarouselTwo,
-    CarouselThree,
-    CarouselFour
+    Carousel
   },
   data() {
     return {
@@ -36,12 +23,11 @@ export default defineComponent({
     };
   },
   mounted() {
-    // console.log('第三个新组件', this.$refs.threeNew);
-    // (this.$refs.three as typeof CarouselThree).slideTo(2);
-    // setTimeout(() => {
-    //   this.images.push(this.images[1]);
-    //   this.cycle = 1000;
-    // }, 2000);
+    (this.$refs.carousel as typeof Carousel).slideTo(2);
+    setTimeout(() => {
+      this.images.push(this.images[1]);
+      this.cycle = 1000;
+    }, 2000);
   }
 });
 </script>
