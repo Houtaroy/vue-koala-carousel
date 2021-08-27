@@ -2,7 +2,7 @@
   <div>
     <ul>
       <template v-for="(image, index) in images" :key="index">
-        <li v-show="index === selectedIndex">
+        <li v-show="index === currentIndex">
           <img :src="image" />
         </li>
       </template>
@@ -10,10 +10,11 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { defineComponent, PropType, toRefs, watch } from 'vue';
+import createCirularQueue from '../composables/CircularQueue';
 
 export default defineComponent({
-  name: 'Carousel',
+  name: 'CarouselThree',
   props: {
     images: {
       type: Array as PropType<string[]>,
@@ -27,43 +28,16 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const selectedIndex = ref(0);
-    const timer = ref<number | undefined>(undefined);
-    const getSelectedItemIndex = (): number => {
-      return selectedIndex.value;
-    };
-    const getSelectedItem = (): string => {
-      return props.images[selectedIndex.value];
-    };
-    const slideTo = (index: number): void => {
-      selectedIndex.value = index;
-    };
-    const slidePrevious = (): void => {
-      slideTo((props.images.length + selectedIndex.value - 1) % props.images.length);
-    };
-    const slideNext = (): void => {
-      slideTo((selectedIndex.value + 1) % props.images.length);
-    };
-    const stop = (): void => {
-      clearInterval(timer.value);
-    };
-    const start = (): void => {
-      stop();
-      timer.value = setInterval(() => slideNext(), props.cycle);
-    };
-    start();
+    const cirularQueue = createCirularQueue(props.images, { interval: props.cycle });
+    watch(toRefs(props).cycle, (newValue) => {
+      cirularQueue.setIntervalTime(newValue);
+    });
     return {
-      selectedIndex,
-      timer,
-      getSelectedItem,
-      getSelectedItemIndex,
-      slideTo,
-      slidePrevious,
-      slideNext,
-      stop,
-      start
+      currentIndex: cirularQueue.currentIndex,
+      slideTo: cirularQueue.to,
+      slideNext: cirularQueue.next,
+      slidePrevious: cirularQueue.previous
     };
   }
 });
 </script>
-<style scoped></style>
