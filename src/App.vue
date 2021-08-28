@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Carousel from './components/Carousel';
+import Carousel from 'vue-koala-carousel';
 
 export default defineComponent({
   name: 'App',
