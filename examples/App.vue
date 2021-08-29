@@ -1,18 +1,14 @@
 <template>
-  <Carousel ref="carousel" :intervalTime="intervalTime">
+  <vue-koala-carousel ref="carousel" :intervalTime="intervalTime">
     <img v-for="(image, index) in images" :key="index" :src="image" />
-  </Carousel>
+  </vue-koala-carousel>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Carousel from 'vue-koala-carousel';
 
 export default defineComponent({
   name: 'App',
-  components: {
-    Carousel
-  },
   data() {
     return {
       images: [
@@ -25,7 +21,6 @@ export default defineComponent({
     };
   },
   mounted() {
-    (this.$refs.carousel as typeof Carousel).slideTo(2);
     setTimeout(() => {
       this.images.push(this.images[1]);
       this.intervalTime = 1000;

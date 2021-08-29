@@ -51,15 +51,15 @@ function create(length: Ref<number>, options?: CycleOptions): ICycle {
       stop();
     }
     start();
-  }
+  };
   const setLength = (newVal: number): void => {
     length.value = newVal;
     currentIndex.value = 0;
-    reset()
-  }
+    reset();
+  };
   const setIntervalTime = (newVal: number): void => {
     intervalTime = newVal;
-    reset()
+    reset();
   };
   return {
     length,
